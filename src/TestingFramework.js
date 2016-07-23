@@ -28,7 +28,10 @@ var assertions = {
             this.assertEqual(expectedMessage, error.message);
         }
 
-        this.assertTrue(hasThrown, "Expected to throw an error, but nothing was thrown");
+        this.assertTrue(
+            hasThrown,
+            "Expected to throw an error, but nothing was thrown"
+        );
     }
 };
 
