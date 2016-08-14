@@ -2,14 +2,18 @@ var runTestSuite = require("../src/TestingFramework");
 
 runTestSuite(function (t) {
     this.testSuccess = function () {
-        t.assertThrow("an error message", function () {
-            throw new Error("an error message");
+        t.assertNotThrow(function () {
+            t.assertThrow("an error message", function () {
+                throw new Error("an error message");
+            });
         });
     };
 
     this.testSuccess_withDifferentExpectedMessage = function () {
-        t.assertThrow("a different error message", function () {
-            throw new Error("a different error message");
+        t.assertNotThrow(function () {
+            t.assertThrow("a different error message", function () {
+                throw new Error("a different error message");
+            });
         });
     };
 

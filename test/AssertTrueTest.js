@@ -2,7 +2,9 @@ var runTestSuite = require("../src/TestingFramework");
 
 runTestSuite(function (t) {
     this.testSuccess = function () {
-        t.assertTrue(true);
+        t.assertNotThrow(function () {
+            t.assertTrue(true);
+        });
     };
 
     this.testFailure = function () {
