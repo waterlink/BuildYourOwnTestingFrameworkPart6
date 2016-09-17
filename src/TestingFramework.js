@@ -82,13 +82,21 @@ function SimpleReporter() {
     }
 }
 
+function getTestSuiteName(testSuiteConstructor, testSuite) {
+    if (typeof(testSuite.getTestSuiteName) !== "function") {
+        return testSuiteConstructor.name;
+    }
+
+    return testSuite.getTestSuiteName();
+}
+
 function runTestSuite(testSuiteConstructor, options) {
     options = options || {};
     var reporter = options.reporter || new SimpleReporter();
 
     var testSuite = new testSuiteConstructor(assertions);
 
-    reporter.reportTestSuite(testSuiteConstructor.name);
+    reporter.reportTestSuite(getTestSuiteName(testSuiteConstructor, testSuite));
 
     for (var testName in testSuite) {
         if (testName.match(/^test/)) {

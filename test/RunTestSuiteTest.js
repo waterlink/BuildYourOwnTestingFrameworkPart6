@@ -51,4 +51,14 @@ runTestSuite(function RunTestSuiteTest(t) {
         reporter.assertHasReportedTest("testADifferentTestName");
         reporter.assertHasReportedTest("testAnInterestingTestName");
     };
+
+    this.testItCanHaveCustomNameOfTheTestSuite = function () {
+        runTestSuite(function (t) {
+            this.getTestSuiteName = function () {
+                return "CustomNameOfTheTestSuite";
+            };
+        }, {reporter: reporter});
+
+        reporter.assertHasReportedTestSuite("CustomNameOfTheTestSuite");
+    };
 });
