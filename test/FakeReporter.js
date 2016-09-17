@@ -16,11 +16,6 @@ module.exports = function FakeReporter(assertions) {
         )
     };
 
-    this._reset = function () {
-        reportedTestSuite = null;
-        reportedTests = [];
-    };
-
     // -- Reporter --
 
     this.reportTestSuite = function (name) {

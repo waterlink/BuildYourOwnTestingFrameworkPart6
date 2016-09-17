@@ -82,25 +82,30 @@ function SimpleReporter() {
     }
 }
 
-function getTestSuiteName(testSuiteConstructor, testSuite) {
-    if (typeof(testSuite.getTestSuiteName) !== "function") {
+function getTestSuiteName(testSuiteConstructor, testSuitePrototype) {
+    if (typeof(testSuitePrototype.getTestSuiteName) !== "function") {
         return testSuiteConstructor.name;
     }
 
-    return testSuite.getTestSuiteName();
+    return testSuitePrototype.getTestSuiteName();
+}
+
+function createTestSuite(testSuiteConstructor) {
+    return new testSuiteConstructor(assertions);
 }
 
 function runTestSuite(testSuiteConstructor, options) {
     options = options || {};
     var reporter = options.reporter || new SimpleReporter();
 
-    var testSuite = new testSuiteConstructor(assertions);
+    var testSuitePrototype = createTestSuite(testSuiteConstructor);
 
-    reporter.reportTestSuite(getTestSuiteName(testSuiteConstructor, testSuite));
+    reporter.reportTestSuite(getTestSuiteName(testSuiteConstructor, testSuitePrototype));
 
-    for (var testName in testSuite) {
+    for (var testName in testSuitePrototype) {
         if (testName.match(/^test/)) {
             reporter.reportTest(testName);
+            var testSuite = createTestSuite(testSuiteConstructor);
             testSuite[testName]();
         }
     }
