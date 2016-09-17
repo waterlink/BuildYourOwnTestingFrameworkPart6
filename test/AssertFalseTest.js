@@ -1,6 +1,6 @@
 var runTestSuite = require("../src/TestingFramework");
 
-runTestSuite(function (t) {
+runTestSuite(function AssertFalseTest(t) {
     this.testSuccess = function () {
         t.assertNotThrow(function () {
             t.assertFalse(false);

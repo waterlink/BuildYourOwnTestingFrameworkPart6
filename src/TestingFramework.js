@@ -72,11 +72,27 @@ var assertions = {
     }
 };
 
-function runTestSuite(testSuiteConstructor) {
+function SimpleReporter() {
+    this.reportTestSuite = function (name) {
+        process.stdout.write("\n" + name + "\n");
+    };
+
+    this.reportTest = function (name) {
+        process.stdout.write("\t" + name + "\n");
+    }
+}
+
+function runTestSuite(testSuiteConstructor, options) {
+    options = options || {};
+    var reporter = options.reporter || new SimpleReporter();
+
     var testSuite = new testSuiteConstructor(assertions);
+
+    reporter.reportTestSuite(testSuiteConstructor.name);
 
     for (var testName in testSuite) {
         if (testName.match(/^test/)) {
+            reporter.reportTest(testName);
             testSuite[testName]();
         }
     }

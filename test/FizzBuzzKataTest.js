@@ -7,7 +7,7 @@ function fizzBuzz(number) {
     return number.toString();
 }
 
-runTestSuite(function (t) {
+runTestSuite(function FizzBuzzKataTest(t) {
     this.testNormalNumberIsReturned = function () {
         t.assertEqual("1", fizzBuzz(1));
     };
