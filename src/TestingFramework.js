@@ -99,3 +99,4 @@ function runTestSuite(testSuiteConstructor, options) {
 }
 
 module.exports = runTestSuite;
+module.exports.SimpleReporter = SimpleReporter;
