@@ -1,28 +1,26 @@
 module.exports = function ReporterSpy(assertions) {
-    var reportedTestSuite = null;
-    var reportedTests = [];
+    var testSuiteName = null;
+    var testNames = [];
 
-    this.assertHasReportedTestSuite = function (name) {
+    this.assertHasReportedTestSuite = function (expectedName) {
         assertions.assertTrue(
-            reportedTestSuite === name,
-            "Expected test suite '" + name + "' to be reported"
+            testSuiteName === expectedName,
+            "Expected test suite '" + expectedName + "' to be reported"
         );
     };
 
-    this.assertHasReportedTest = function (name) {
+    this.assertHasReportedTest = function (expectedName) {
         assertions.assertTrue(
-            reportedTests.indexOf(name) >= 0,
-            "Expected test '" + name + "' to be reported"
-        )
+            testNames.indexOf(expectedName) >= 0,
+            "Expected test '" + expectedName + "' to be reported"
+        );
     };
 
-    // -- Reporter --
-
     this.reportTestSuite = function (name) {
-        reportedTestSuite = name;
+        testSuiteName = name;
     };
 
     this.reportTest = function (name) {
-        reportedTests.push(name);
+        testNames.push(name);
     };
 };

@@ -61,4 +61,14 @@ runTestSuite(function RunTestSuiteTest(t) {
 
         reporter.assertHasReportedTestSuite("CustomNameOfTheTestSuite");
     };
+
+    this.testItCanHaveCustomNameOfTheTestSuite_withDifferentName = function () {
+        runTestSuite(function (t) {
+            this.getTestSuiteName = function () {
+                return "DifferentTestSuiteName";
+            };
+        }, {reporter: reporter});
+
+        reporter.assertHasReportedTestSuite("DifferentTestSuiteName");
+    };
 });

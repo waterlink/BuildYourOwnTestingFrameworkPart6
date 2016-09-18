@@ -79,7 +79,7 @@ function SimpleReporter() {
 
     this.reportTest = function (name) {
         process.stdout.write("\t" + name + "\n");
-    }
+    };
 }
 
 function getTestSuiteName(testSuiteConstructor, testSuitePrototype) {
@@ -100,7 +100,9 @@ function runTestSuite(testSuiteConstructor, options) {
 
     var testSuitePrototype = createTestSuite(testSuiteConstructor);
 
-    reporter.reportTestSuite(getTestSuiteName(testSuiteConstructor, testSuitePrototype));
+    reporter.reportTestSuite(
+        getTestSuiteName(testSuiteConstructor, testSuitePrototype)
+    );
 
     for (var testName in testSuitePrototype) {
         if (testName.match(/^test/)) {

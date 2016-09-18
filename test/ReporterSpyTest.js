@@ -30,13 +30,13 @@ runTestSuite(function ReporterSpy_BehaviorTest(t) {
         });
     };
 
-    this.testAssertHasReportedTestSuite_whenReporting_andFailing = function () {
+    this.testAssertHasReportedTestSuite_whenReporting_andFailingWithDifferentName = function () {
         t.assertThrow("Expected test suite 'OtherTestSuite' to be reported", function () {
             reporter.reportTestSuite("HelloWorld");
             reporter.assertHasReportedTestSuite("OtherTestSuite");
         });
     };
-
+    
     this.testAssertHasReportedTest_whenFailing = function () {
         t.assertThrow("Expected test 'testName' to be reported", function () {
             reporter.assertHasReportedTest("testName");
