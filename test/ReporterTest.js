@@ -2,11 +2,11 @@ var TestingFramework = require("../src/TestingFramework");
 var runTestSuite = TestingFramework;
 var SimpleReporter = TestingFramework.SimpleReporter;
 
-var FakeReporter = require("./FakeReporter");
+var ReporterSpy = require("./ReporterSpy");
 
 const IMPLEMENTATIONS = [
     SimpleReporter,
-    FakeReporter
+    ReporterSpy
 ];
 
 IMPLEMENTATIONS.forEach(function (ReporterImplementation) {

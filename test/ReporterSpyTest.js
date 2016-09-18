@@ -1,8 +1,8 @@
 var runTestSuite = require("../src/TestingFramework");
-var FakeReporter = require("./FakeReporter");
+var ReporterSpy = require("./ReporterSpy");
 
-runTestSuite(function FakeReporter_BehaviorTest(t) {
-    var reporter = new FakeReporter(t);
+runTestSuite(function ReporterSpy_BehaviorTest(t) {
+    var reporter = new ReporterSpy(t);
 
     this.testAssertHasReportedTestSuite_whenFailing = function () {
         t.assertThrow("Expected test suite 'HelloWorld' to be reported", function () {

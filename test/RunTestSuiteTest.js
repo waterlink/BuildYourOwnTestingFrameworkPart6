@@ -1,8 +1,8 @@
 var runTestSuite = require("../src/TestingFramework");
-var FakeReporter = require("./FakeReporter");
+var ReporterSpy = require("./ReporterSpy");
 
 runTestSuite(function RunTestSuiteTest(t) {
-    var reporter = new FakeReporter(t);
+    var reporter = new ReporterSpy(t);
 
     this.testItCallsAllTestMethods = function () {
         var spyOne = t.spy();

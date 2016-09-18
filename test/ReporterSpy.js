@@ -1,4 +1,4 @@
-module.exports = function FakeReporter(assertions) {
+module.exports = function ReporterSpy(assertions) {
     var reportedTestSuite = null;
     var reportedTests = [];
 
