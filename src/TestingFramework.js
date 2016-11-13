@@ -82,35 +82,81 @@ function SimpleReporter() {
     };
 }
 
-function getTestSuiteName(testSuiteConstructor, testSuitePrototype) {
-    if (typeof(testSuitePrototype.getTestSuiteName) !== "function") {
-        return testSuiteConstructor.name;
-    }
+function TestSuiteRunStatus() {
+    var failed = false;
 
-    return testSuitePrototype.getTestSuiteName();
+    this.markAsFailed = function () {
+        failed = true;
+    };
+
+    this.hasFailed = function () {
+        return failed;
+    };
 }
 
-function createTestSuite(testSuiteConstructor) {
-    return new testSuiteConstructor(assertions);
+function TestSuiteRunContext(testSuiteConstructor, options) {
+    options = options || {};
+    var reporter = options.reporter || new SimpleReporter();
+    var process = options.process || global.process;
+    var silenceFailures = options.silenceFailures || false;
+    var status = new TestSuiteRunStatus();
+
+    this.invoke = function () {
+        reportTestSuite();
+        runAllTests();
+        finishTestRun();
+    };
+
+    function reportTestSuite() {
+        reporter.reportTestSuite(getTestSuiteName());
+    }
+
+    function getTestSuiteName() {
+        if (typeof(createTestSuite().getTestSuiteName) !== "function") {
+            return testSuiteConstructor.name;
+        }
+
+        return createTestSuite().getTestSuiteName();
+    }
+
+    function createTestSuite() {
+        return new testSuiteConstructor(assertions);
+    }
+
+    function runAllTests() {
+        for (var testName in createTestSuite()) {
+            if (testName.match(/^test/)) {
+                handleTest(testName);
+            }
+        }
+    }
+
+    function handleTest(testName) {
+        reportTest(testName);
+        runTest(createTestSuite(), testName);
+    }
+
+    function reportTest(testName) {
+        reporter.reportTest(testName);
+    }
+
+    function runTest(testSuite, testName) {
+        try {
+            testSuite[testName]();
+        } catch (error) {
+            if (!silenceFailures) console.log(error);
+            status.markAsFailed();
+        }
+    }
+
+    function finishTestRun() {
+        if (status.hasFailed()) return process.exit(1);
+        process.exit(0);
+    }
 }
 
 function runTestSuite(testSuiteConstructor, options) {
-    options = options || {};
-    var reporter = options.reporter || new SimpleReporter();
-
-    var testSuitePrototype = createTestSuite(testSuiteConstructor);
-
-    reporter.reportTestSuite(
-        getTestSuiteName(testSuiteConstructor, testSuitePrototype)
-    );
-
-    for (var testName in testSuitePrototype) {
-        if (testName.match(/^test/)) {
-            reporter.reportTest(testName);
-            var testSuite = createTestSuite(testSuiteConstructor);
-            testSuite[testName]();
-        }
-    }
+    new TestSuiteRunContext(testSuiteConstructor, options).invoke();
 }
 
 module.exports = runTestSuite;

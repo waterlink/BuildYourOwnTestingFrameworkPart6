@@ -2,4 +2,6 @@
 
 set -e
 
-ls test/*.js | xargs -I {} node {}
+for testFile in $(ls test/*.js); do
+    node ${testFile}
+done
