@@ -94,18 +94,57 @@ function TestSuiteRunStatus() {
     };
 }
 
+function SimpleProcess(globalProcess) {
+    var hook = null;
+
+    this.exit = function (code) {
+        if (hook !== null)
+            hook();
+
+        globalProcess.exit(code);
+    };
+
+    this.installHook = function (aHook) {
+        hook = aHook;
+    };
+
+    this.uninstallHook = function () {
+        hook = null;
+    };
+}
+
+var simpleProcess = new SimpleProcess(global.process);
+
 function TestSuiteRunContext(testSuiteConstructor, options) {
     options = options || {};
     var reporter = options.reporter || new SimpleReporter();
-    var process = options.process || global.process;
+    var process = options.process || simpleProcess;
     var silenceFailures = options.silenceFailures || false;
     var status = new TestSuiteRunStatus();
+    var verifyAllTestsRun = options.verifyAllTestsRun || false;
+    var testCount = 0;
+    var testRun = 0;
 
     this.invoke = function () {
+        if (verifyAllTestsRun)
+            installVerifyAllTestsRunHook();
+
         reportTestSuite();
+        countAllTests();
         runAllTests();
         finishTestRun();
     };
+
+    function installVerifyAllTestsRunHook() {
+        simpleProcess.installHook(function () {
+            if (testRun < testCount) {
+                simpleProcess.uninstallHook();
+                var error = new Error("Expected all tests to run");
+                error.bubbleUp = true;
+                throw error;
+            }
+        });
+    }
 
     function reportTestSuite() {
         reporter.reportTestSuite(getTestSuiteName());
@@ -123,15 +162,20 @@ function TestSuiteRunContext(testSuiteConstructor, options) {
         return new testSuiteConstructor(assertions);
     }
 
+    function countAllTests() {
+        for (var testName in createTestSuite())
+            if (testName.match(/^test/))
+                testCount++;
+    }
+
     function runAllTests() {
-        for (var testName in createTestSuite()) {
-            if (testName.match(/^test/)) {
+        for (var testName in createTestSuite())
+            if (testName.match(/^test/))
                 handleTest(testName);
-            }
-        }
     }
 
     function handleTest(testName) {
+        testRun++;
         reportTest(testName);
         runTest(createTestSuite(), testName);
     }
@@ -144,6 +188,7 @@ function TestSuiteRunContext(testSuiteConstructor, options) {
         try {
             testSuite[testName]();
         } catch (error) {
+            if (error.bubbleUp) throw error;
             if (!silenceFailures) console.log(error);
             status.markAsFailed();
         }
@@ -161,3 +206,4 @@ function runTestSuite(testSuiteConstructor, options) {
 
 module.exports = runTestSuite;
 module.exports.SimpleReporter = SimpleReporter;
+module.exports.SimpleProcess = SimpleProcess;

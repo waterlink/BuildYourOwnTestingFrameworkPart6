@@ -1,8 +1,14 @@
 var runTestSuite = require("../src/TestingFramework");
 var ReporterSpy = require("./ReporterSpy");
+var ProcessSpy = require("./ProcessSpy");
 
 runTestSuite(function RunTestSuiteTest(t) {
     var reporter = new ReporterSpy(t);
+    var process = new ProcessSpy(t);
+    var options = {
+        reporter: reporter,
+        process: process
+    };
 
     this.testItCallsAllTestMethods = function () {
         var spyOne = t.spy();
@@ -13,7 +19,7 @@ runTestSuite(function RunTestSuiteTest(t) {
             this.testFunctionOne = spyOne;
             this.testFunctionTwo = spyTwo;
             this.testFunctionThree = spyThree;
-        }, {reporter: reporter});
+        }, options);
 
         spyOne.assertCalled();
         spyTwo.assertCalled();
@@ -25,7 +31,7 @@ runTestSuite(function RunTestSuiteTest(t) {
 
         runTestSuite(function (t) {
             this.someFunction = aSpy;
-        }, {reporter: reporter});
+        }, options);
 
         aSpy.assertNotCalled();
     };
@@ -34,7 +40,7 @@ runTestSuite(function RunTestSuiteTest(t) {
         runTestSuite(function TestSuiteName(t) {
             this.testSomeTestName = function () {};
             this.testSomeOtherTestName = function () {};
-        }, {reporter: reporter});
+        }, options);
 
         reporter.assertHasReportedTestSuite("TestSuiteName");
         reporter.assertHasReportedTest("testSomeTestName");
@@ -45,7 +51,7 @@ runTestSuite(function RunTestSuiteTest(t) {
         runTestSuite(function EntirelyDifferentTestSuiteName(t) {
             this.testADifferentTestName = function () {};
             this.testAnInterestingTestName = function () {};
-        }, {reporter: reporter});
+        }, options);
 
         reporter.assertHasReportedTestSuite("EntirelyDifferentTestSuiteName");
         reporter.assertHasReportedTest("testADifferentTestName");
@@ -57,7 +63,7 @@ runTestSuite(function RunTestSuiteTest(t) {
             this.getTestSuiteName = function () {
                 return "CustomNameOfTheTestSuite";
             };
-        }, {reporter: reporter});
+        }, options);
 
         reporter.assertHasReportedTestSuite("CustomNameOfTheTestSuite");
     };
@@ -67,8 +73,8 @@ runTestSuite(function RunTestSuiteTest(t) {
             this.getTestSuiteName = function () {
                 return "DifferentTestSuiteName";
             };
-        }, {reporter: reporter});
+        }, options);
 
         reporter.assertHasReportedTestSuite("DifferentTestSuiteName");
     };
-});
+}, {verifyAllTestsRun: true});

@@ -1,8 +1,15 @@
 var runTestSuite = require("../src/TestingFramework");
 var ProcessSpy = require("./ProcessSpy");
+var ReporterSpy = require("./ReporterSpy");
 
 runTestSuite(function FailureTest(t) {
-    var processSpy = new ProcessSpy();
+    var process = new ProcessSpy();
+    var reporter = new ReporterSpy();
+    var options = {
+        process: process,
+        reporter: reporter,
+        silenceFailures: true
+    };
 
     this.testItDoesNotBubbleUpExceptions = function () {
         var aSpy = t.spy();
@@ -14,7 +21,7 @@ runTestSuite(function FailureTest(t) {
                 };
 
                 this.testSomething = aSpy;
-            }, {process: processSpy, silenceFailures: true});
+            }, options);
         });
 
         aSpy.assertCalled();
@@ -25,9 +32,9 @@ runTestSuite(function FailureTest(t) {
             this.testFailure = function () {
                 t.assertTrue(false);
             };
-        }, {process: processSpy, silenceFailures: true});
+        }, options);
 
-        t.assertEqual(1, processSpy.hasExitedWithCode);
+        t.assertEqual(1, process.hasExitedWithCode);
     };
 
     this.testItExitsWithProcessCodeZero_onSuccess = function () {
@@ -35,8 +42,8 @@ runTestSuite(function FailureTest(t) {
             this.testFailure = function () {
                 t.assertTrue(true);
             };
-        }, {process: processSpy, silenceFailures: true});
+        }, options);
 
-        t.assertEqual(0, processSpy.hasExitedWithCode);
+        t.assertEqual(0, process.hasExitedWithCode);
     };
-});
+}, {verifyAllTestsRun: true});
